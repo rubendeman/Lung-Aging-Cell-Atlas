@@ -41,7 +41,9 @@ for(i in 1:length(soup.sample.names)){
                     " --infile ", soup.sample.dir.paths[i], "/basecall2/",soup.sample.names[i],".calling.step1.tsv",
                     " --outfile ", soup.sample.dir.paths[i], "/basecall2/", soup.sample.names[i],
                     " --editing ", editing,
-                    " --pon ", PON, "\n",sep="")
+                    " --pon ", PON, "\n",
+                    "bedtools intersect -header -a ",soup.sample.dir.paths[i],"/basecall2/",soup.sample.names[i],".calling.step2.tsv -b /home/rd796/project/SComatic-main/bed_files_of_interest/UCSC.k100_umap.without.repeatmasker.bed | awk '$1 ~ /^#/ || $6 == \"PASS\"' > ",soup.sample.dir.paths[i],"/basecall2/",soup.sample.names[i],".calling.step2.pass.tsv",
+                    sep="")
 cat(cmd.out,file=script.filepath,append=F)
 cat("sbatch ",script.filepath,"\n",sep="",file=jobsub.filepath, append=TRUE)
 }
