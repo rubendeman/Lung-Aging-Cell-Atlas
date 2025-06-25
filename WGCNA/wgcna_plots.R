@@ -1,8 +1,5 @@
 setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(WGCNA)
-#options(stringsAsFactors = FALSE)
-#enableWGCNAThreads()
-#options(bitmapType='cairo')
 
 load("loggedmes.RData") #load module eigengenes
 load("evennewerstep1.RData") #load bulk
