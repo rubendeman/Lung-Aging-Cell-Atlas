@@ -34,20 +34,20 @@ comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothel
 cell.types<-unlist(comp)
 immune.combined<-subset(immune.combined,subset=predicted.id %in% cell.types,invert=F)
 
-load('/home/rd796/project/ageproj/cellmutmat.RData')
+load('/home/rd796/project/ageproj/cellmutmatv2.RData')
 
 colnames(gfg_data)<-c('Fibroblast','Alv_Macrophage','Aerocyte','Arterial','AT1','AT2','B','Basal','Ciliated','Club','DC','gCap','Goblet','Lymphatic','Macrophage','Monocyte','Myofibroblast','NK','Peribronchial','Pericyte','SMC','T','Venous')
 
 ann <- gfg_data[,cellTypeTest]
 rnames=rownames(gfg_data)
 tmp=!is.na(ann)
-if(cellTypeTest=='gCap'){tmp[18]=F}
+#if(cellTypeTest=='gCap'){tmp[18]=F}
 ann<-ann[tmp]
 ann=factor(cut(ann,c(0,median(ann),100),c('Low Mutation','High Mutation')),levels=c('Low Mutation','High Mutation'))
 rnames<-rnames[tmp]
 ann=data.frame('mut'=(ann))
 rownames(ann)=rnames
-if(cellTypeTest=='gCap'){ann$mut[rownames(ann)=="460"]="High Mutation"}
+#if(cellTypeTest=='gCap'){ann$mut[rownames(ann)=="460"]="High Mutation"}
 
 soup.subset<-subset(immune.combined,subset=predicted.id==cellTypeTest&orig.ident %in% rnames)
 soup.subset<-AddMetaData(soup.subset,metadata=ann$mut[match(soup.subset$orig.ident,rnames)],col.name='mut')

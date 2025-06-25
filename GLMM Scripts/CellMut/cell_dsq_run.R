@@ -17,7 +17,7 @@ immune.combined$predicted.id[immune.combined$predicted.id=='Adventitial Fibrobla
 
 #immune.combined<-subset(immune.combined,subset=Manuscript_Identity=='Baylor') #subset out the ipf cell atlas
 
-cell.types<-c('AT2','gCap')
+cell.types<-c('AT1','AT2','gCap')
 cellType=cell.types
 
 genes.test <- list() #keep genes expressed in greater than 50% of subjects
@@ -44,7 +44,7 @@ if(dir.exists(script.output.dir)==FALSE){
   dir.create(script.output.dir)
 }
 
-jobsub.filepath <- file.path(script.output.dir, "joblist.txt")
+jobsub.filepath <- file.path(script.output.dir, "joblist_cell.txt")
 
 rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/CellMut/runmodel_cell.R"
 
