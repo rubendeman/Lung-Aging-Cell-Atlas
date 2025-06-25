@@ -9,14 +9,16 @@ library(gprofiler2)
 #read glmmTMB output
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-as.list(unlist(comp)); names(cell.types)<-cell.types
-#datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/palmer_scratch/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/palmer_scratch/GLMM_nozi/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+#datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
 datal=lapply(datal,function(x){mutate(x,p_val_adj=p.adjust(x$p_val,method='fdr',n=nrow(x)))})
 datal=lapply(datal,function(x){x[order(x$p_val,decreasing=F),]})
 
 names(datal)<-str_replace_all(names(datal), c("Alv_Macrophage" = "Alv. Macrophage", "Adv_Fibroblast" = "Adventitial Fibroblast", "Alv_Fibroblast"="Alv. Fibroblast"))
+datalsig<-lapply(datal,function(x){x[x$p_val<0.05,]})
+datalfdr<-lapply(datal,function(x){x[x$p_val_adj<0.05,]})
 
 #FIGURE 2
 plotdata<-data.frame(ID=rep(names(datal),sapply(datal,nrow)),do.call('rbind',datal))
@@ -40,22 +42,6 @@ g2<-ggplot(lmat, aes(y = PerDiff, x = factor(Cell, levels=Cell[order(PerDiff)]),
     geom_bar(stat = "identity")+theme_minimal()+theme(axis.line.x=element_line(size=1),axis.text.y =element_blank(), axis.title.y = element_blank(),panel.grid.major = element_blank(),panel.grid.minor = element_blank())+NoLegend()+
     labs(x="Cell Type", y = "% Differentially Expressed Genes", fill=NULL)+coord_flip()+scale_fill_manual(values=lmat$color)
 g1+g2
-#pdf('fig2.pdf',width=18,height=12) #2X
-#plot_grid(g1,g2,g3,g4,ncol=2)
-#dev.off()
-
-#DGE
-bla<-datal[['gCap']]
-bladn<-bla[bla$Beta1<0,]
-blaup<-bla[bla$Beta1>0,]
-upgenes<-bladn$Gene[1:25]
-dngenes<-blaup$Gene[1:25]
-noquote(bladn$Gene[1:100])
-noquote(blaup$Gene[1:100])
-#sapply(datal,function(x){x$p_val_adj[x$Gene=='FBXW7']})
-
-golist <- bladn$Gene[bladn$p_val_adj<0.05]
-golist <- blaup$Gene[blaup$p_val_adj<0.05]
 
 #UPSETS
 library(UpSetR)
@@ -70,7 +56,7 @@ noquote(feats)
 
 #Endothelial UPSET
 ct=comp[['Endothelial']]
-u1<-upset(fromList(data_upset[ct]),order.by='freq',empty.intersections="on")
+u1<-upset(fromList(data_upset[ct]),order.by='freq',empty.intersections="on",text.scale=1.2)
 u1
 
 #Capillary Overlap
@@ -79,11 +65,10 @@ ct=c('gCap','Aerocyte')
 data_upset=lapply(datal,function(x){x$Gene[x$p_val<0.05&x$Beta1<0]}) #UP
 upgenes=Reduce(intersect,data_upset[ct])
 rnk=order(colMeans(rbind(match(upgenes, data_upset[[ct[1]]]),match(upgenes, data_upset[[ct[2]]]))))
-upgenes=upgenes[rnk][1:21]
+
 data_upset=lapply(datal,function(x){x$Gene[x$p_val<0.05&x$Beta1>0]}) #DN
 dngenes=Reduce(intersect,data_upset[ct])
 rnk=order(colMeans(rbind(match(dngenes, data_upset[[ct[1]]]),match(dngenes, data_upset[[ct[2]]]))))
-dngenes=dngenes[rnk][1:21]
 
 #Query autophagy genes
 ct=c('Aerocyte','gCap','Arterial','Venous','AT1','AT2')
@@ -116,31 +101,28 @@ auto3=as.data.frame(auto2)
 
 #GO
 golist=upgenes
-go_out<-gost(query=golist, organism = "hsapiens");
+go_out<-gost(query=golist, organism = "hsapiens")
 kres=go_out$result[go_out$result$source%in%c('KEGG','REAC'),]
 kres=kres[order(kres$p_value,decreasing=F),]
 kmat=kres[,c(3,11)]
 if(nrow(kmat)>10){kmat<-kmat[1:12,]}
-kmat=kmat[1:6,]
+kmat=kmat[1:5,]
 kmat$term_name<-factor(kmat$term_name,levels=rev(kmat$term_name))
-u2<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
+u1<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
     scale_fill_gradient(low='grey',high='yellow',limits=c(0,max(-log10(kmat$p_value))))+ geom_text(aes(label = term_name,hjust=1)) + 
     theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='REAC Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
-u2
+u1
 
 golist=dngenes
-go_out<-gost(query=golist, organism = "hsapiens");
+go_out<-gost(query=golist, organism = "hsapiens")
 kres=go_out$result[go_out$result$source%in%c('KEGG','REAC'),]
 kres=kres[order(kres$p_value,decreasing=F),]
 kmat=kres[,c(3,11)]
 if(nrow(kmat)>10){kmat<-kmat[1:12,]}
-kmat$term_name[2]='Respiratory electron transport, ATP synthesis'
-kmat$term_name[3]='Chemical carcinogenesis - ROS'
-kmat$term_name[7]='TCA cycle and respiratory electron transport'
-kmat=kmat[c(1,2,3,6,7,12),]
+kmat=kmat[c(1,2,8,11),]
 kmat$term_name<-factor(kmat$term_name,levels=rev(kmat$term_name))
-u3<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
+u2<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
     scale_fill_gradient(low='grey',high='purple',limits=c(0,max(-log10(kmat$p_value))))+ geom_text(aes(label = term_name,hjust=1)) + 
     theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='REAC Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
-u3
-plot_grid(u2,u3,ncol=1)
+u2
+plot_grid(u1,u2,ncol=1)

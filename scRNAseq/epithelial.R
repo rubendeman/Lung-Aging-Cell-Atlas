@@ -122,7 +122,8 @@ indprop<-ind/demo$count
 cormat2<-na.omit(as.data.frame(pivot_longer(as.data.frame(cbind(age=demo$age,indprop)),!age)))
 cormat2$age<-cut(cormat2$age,c(0,60,100),c('Young','Aged'))
 h0=ggplot(cormat2, aes(y = value, x = name,fill=factor(age,levels=c('Young','Aged')))) + geom_boxplot() + theme_classic()+ theme(axis.text.x = element_text(size=12,angle = 45, vjust = 1, hjust=1)) +
-    labs(x=NULL, y = "Cell Type Proportion")+guides(fill=guide_legend(title=NULL))+geom_point(position=position_jitterdodge(jitter.width=0.1))+scale_fill_manual(values=c('#91C4F2','#253C78'))
+    labs(x=NULL, y = "Cell Type Proportion")+guides(fill=guide_legend(title=NULL))+geom_point(position=position_jitterdodge(jitter.width=0.1))+scale_fill_manual(values=c('#91C4F2','#253C78')) +
+    stat_compare_means(label='p.signif')
 
 #Plot %AT2S young versus old
 newdata=data.frame(epi_sub@meta.data$predicted.id, age=as.numeric(epi_sub@meta.data$age), sample=epi_sub@meta.data$orig.ident);
@@ -130,14 +131,16 @@ newdata=newdata %>% group_by(sample) %>% summarise(V1=sum(epi_sub.meta.data.pred
 newdata$age=cut(newdata$age,c(0,60,90),c('Young','Aged'))
 newdata=newdata[newdata$V1>0,]
 h1<-ggplot(newdata,aes(x=age, y=V1)) + geom_boxplot() + geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + 
-labs(x='Age',y='% SPCˡᵒʷ AT2')+theme_classic()+theme(text = element_text(size=15)) +scale_y_continuous(limits=c(0,1))
+labs(x='Age',y='% SPCˡᵒʷ AT2')+theme_classic()+theme(text = element_text(size=15)) +scale_y_continuous(limits=c(0,1)) +
+stat_compare_means()
 t.test(newdata$V1[newdata$age=='Aged'],newdata$V1[newdata$age=='Young'])
 
 #Plot % expressing HHIP in AT2B vs AT2S
 newdata=data.frame(cell=epi_sub@meta.data$predicted.id, sample=epi_sub@meta.data$orig.ident, gene=epi_sub@assays$RNA@data['HHIP',]>0)
 newdata=newdata %>% group_by(sample,cell) %>% summarise(V1=sum(gene)/length(gene))
 h2<-ggplot(newdata,aes(x=cell, y=V1)) + geom_boxplot() + geom_dotplot(binaxis='y', stackdir='center', dotsize=1) + 
-labs(x='Cell Type',y='% Expressing HHIP')+theme_classic()+theme(text = element_text(size=15)) +scale_y_continuous(limits=c(0,1))
+labs(x='Cell Type',y='% Expressing HHIP')+theme_classic()+theme(text = element_text(size=15)) +scale_y_continuous(limits=c(0,1.1)) +
+stat_compare_means()
 plot_grid(h1,h2,ncol=2)
 
 #PLOT OF SURFACTANTS
@@ -168,5 +171,6 @@ datalist2$id[datalist2$id=='young']='Young'
 datalist2$id[datalist2$id=='old']='Aged'
 if(cellorgene=='gene'){datalist2$column_label=datalist2$features.plot}
 featbox<-ggplot(datalist2, aes(x=column_label, y=avg.exp,fill=factor(id,levels=c('Young','Aged')))) + geom_boxplot() + theme_classic()+ theme(axis.text.x = element_text(size=12,angle = 45, vjust = 1, hjust=1)) +
-    labs(x=NULL, y = "Gene Expression")+guides(fill=guide_legend(title=NULL))+geom_point(position=position_jitterdodge(jitter.width=0.1))+scale_fill_manual(values=c('#91C4F2','#253C78'))
-plot_grid(h0,featbox,ncol=2)
+    labs(x=NULL, y = "Gene Expression")+guides(fill=guide_legend(title=NULL))+geom_point(position=position_jitterdodge(jitter.width=0.1))+scale_fill_manual(values=c('#91C4F2','#253C78')) +
+    stat_compare_means(label='p.signif')
+

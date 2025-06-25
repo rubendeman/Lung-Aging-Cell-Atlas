@@ -89,23 +89,3 @@ mes <- FindNeighbors(mes, reduction = "pca", dims = 1:20)
 mes <- FindClusters(mes, resolution = 0.1)
 DimPlot(mes,label=T,raster=F)+DimPlot(mes,group.by='predicted.id',raster=F,label=T)
 immune.combined@meta.data$predicted.id[match(rownames(mes@meta.data)[mes@active.ident %in% c(4,5,6)],rownames(immune.combined@meta.data))]<-'Multiplet'
-
-immune.combined@meta.data$agebin[immune.combined@meta.data$age>69]='old'
-immune.combined@meta.data$agebin[immune.combined@meta.data$age<51]='young'
-
-library(readxl)
-BCM_controls_metadata <- read_excel("/gpfs/gibbs/project/kaminski/rd796/ageproj/BCM_controls_metadata.xlsx")
-BCM_controls_metadata <- BCM_controls_metadata[,c(3,6,7)]
-
-ipf <- read.csv('/gpfs/gibbs/project/kaminski/rd796/ageproj/sc_demo.csv')
-
-BCM_controls_metadata <- rbind(BCM_controls_metadata,setNames(ipf,names(BCM_controls_metadata)))
-#BCM_controls_metadata$Gender[BCM_controls_metadata$Gender=='Female']<-0
-#BCM_controls_metadata$Gender[BCM_controls_metadata$Gender=='Male']<-1
-
-sex <- BCM_controls_metadata$Gender[match(immune.combined@meta.data$orig.ident,as.character(unlist(BCM_controls_metadata[,1])))]
-immune.combined<-AddMetaData(immune.combined,metadata=as.factor(sex),col.name='sex')
-
-#save(immune.combined,file='imm12_10.RData')
-
-t1=as.data.frame(table(immune.combined@meta.data$predicted.id[immune.combined@meta.data$Manuscript_Identity=='IPF Cell Atlas'&immune.combined@meta.data$agebin=='old']));

@@ -87,29 +87,3 @@ immune.combined@meta.data$orig.ident<-coalesce(immune.combined@meta.data$orig.id
 ind<-is.na(immune.combined@meta.data$subject.ident)
 immune.combined@meta.data$Manuscript_Identity[ind]<-"Baylor"
 immune.combined@meta.data$Manuscript_Identity[!ind]<-"IPF Cell Atlas"
-
-library(readxl)
-BCM_controls_metadata <- read_excel("BCM_controls_metadata.xlsx")
-BCM_controls_metadata <- BCM_controls_metadata[,c(3,6,7)]
-
-#age
-ages <- BCM_controls_metadata$`Age at sample`[match(immune.combined@meta.data$orig.ident,as.character(unlist(BCM_controls_metadata[,1])))]
-immune.combined@meta.data$age<-coalesce(immune.combined@meta.data$age,as.numeric(ages))
-
-ages3  <- vector(mode='character',length=nrow(immune.combined@meta.data))
-for (x in 1:nrow(immune.combined@meta.data)) {
-    val=immune.combined@meta.data$age[x]
-    if (val<61){
-        ages3[x]="young";} else {ages3[x]="old"
-    }
-}
-immune.combined@meta.data$agebin<-ages3
-
-#SENMAYO SCORING
-DefaultAssay(immune.combined)<-"RNA"
-rr=read.table('listsenmayo.txt')
-rrr=c(rr[1:18,],rr[20:125,])
-immune.combined <- ScaleData(object = immune.combined, features = rrr)
-geneList <- list(rrr)
-immune.combined <- AddModuleScore(immune.combined, features = geneList, name="SenMayo")
-DefaultAssay(immune.combined)<-"integrated"

@@ -16,7 +16,7 @@ load('evennewerstep1.RData') #load bulk
 # Boxplot - alongside scRNAseq #
 ################################
 load('prop12_15.RData')
-comp<-list(epi=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),endo=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),mes=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),imm=c('Monocyte','Macrophage','Alv. Macrophage'),lymph=c('B','T','Mast','DC','NK'))
+comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage','DC'),Lymphoid=c('B','T','Mast','NK'))
 cell.types<-unlist(comp)
 
 ind=tempprop$Est.prop.weighted
@@ -29,7 +29,7 @@ clinprop=clindata5
 #ind=ind[id_cond,]
 #clinprop=clinprop[id_cond,]
 
-p=list();
+p=list()
 for (i in 1:5){
 cormat2<-na.omit(as.data.frame(pivot_longer(as.data.frame(cbind(age=clinprop$AGE,ind[,comp[[i]]])),!age)))
 vage<-cormat2$name

@@ -239,4 +239,5 @@ f['estimate']
 f['p.value']
 
 ggplot(temp, aes(x = rscale2(logMut), y = rscale2(Entropy))) + geom_point(aes(color=binMut)) + geom_smooth(method='lm',se=F) + theme_classic() + theme(axis.line=element_line(size=1),panel.grid.major = element_blank(),panel.grid.minor = element_blank()) +
-xlab("Mutation Burden")+ylab("Transcriptional Entropy (Scaled)")+labs(color="Mutation Burden")+scale_x_continuous(expand=c(0,0),limits=c(0,1.1)) + scale_y_continuous(expand=c(0,0),limits=c(0,1.1)) + scale_color_manual(values=c('#F52F57','#A20021'))
+xlab("Mutation Burden")+ylab("Transcriptional Entropy (Scaled)")+labs(color="Mutation Burden")+scale_x_continuous(expand=c(0,0),limits=c(0,1.1)) + scale_y_continuous(expand=c(0,0),limits=c(0,1.1)) + scale_color_manual(values=c('#F52F57','#A20021')) +
+stat_cor(method = "pearson", label.x = 0.5, label.y = 1)

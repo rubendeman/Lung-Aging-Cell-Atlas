@@ -13,14 +13,14 @@ load('imm12_10.RData') #load integrated
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined<-NormalizeData(immune.combined)
 
-#immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
-#immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
+immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
+immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
 immune.combined$Manuscript_Identity[immune.combined$Manuscript_Identity=='Baylor']<-'Dataset 1'
 immune.combined$Manuscript_Identity[immune.combined$Manuscript_Identity=='IPF Cell Atlas']<-'Dataset 2'
 immune.combined$agebin[immune.combined$agebin=='old']<-'Aged'
 immune.combined$agebin[immune.combined$agebin=='young']<-'Young'
 
-comp<-list(Epithelial=c('AT1','AT2','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
+comp<-list(Epithelial=c('AT1','AT2','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage','DC'),Lymphoid=c('B','T','Mast','NK'))
 cell.types<-unlist(comp)
 
 immune.combined<-subset(immune.combined,subset=predicted.id %in% cell.types,invert=F)
@@ -33,6 +33,7 @@ immune.combined<-AddMetaData(immune.combined,comp_data,col.name='comp')
 #fill_df <- immune.combined@meta.data %>% select('predicted.id','comp') %>% unique() %>% mutate(color = sample(scales::hue_pal()(25)))
 #save(fill_df,file='fill_df.RData')
 load('fill_df.RData')
+fill_df$comp[fill_df$predicted.id=='DC']<-'Myeloid'
 
 ###########
 # FIGURES #
@@ -64,7 +65,7 @@ plot_grid(p1+facet_wrap(~tempvar), p0,p2+facet_wrap(~tempvar), p3+facet_wrap(~te
 DefaultAssay(immune.combined) = "RNA"
 Idents(immune.combined)<-immune.combined$predicted.id
 levels(immune.combined) <- c(rev(cell.types),levels(immune.combined)[!(levels(immune.combined) %in% cell.types)])
-marker.genes<-c('AGER','SFTPC','KRT5','FOXJ1','CTSE','MUC5AC','PROX1','COL15A1','S100A3','IL7R','DKK2','ACKR1','PI16','PDGFRA','CDH11','ACTG2','TRPC6','S100A12','IL1B','ALOX5AP','CD79A','IL32','TPSAB1','GPR183','NKG7')
+marker.genes<-c('AGER','SFTPC','KRT5','FOXJ1','CTSE','MUC5AC','PROX1','COL15A1','S100A3','IL7R','DKK2','ACKR1','PI16','PDGFRA','CDH11','ACTG2','TRPC6','S100A12','IL1B','ALOX5AP','GPR183','CD79A','IL32','TPSAB1','NKG7')
 dot<-DotPlot(immune.combined, features = marker.genes, idents=cell.types)+ theme_minimal()+theme(axis.text.x = element_text(angle=90))+ RotatedAxis()+labs(y=NULL)
 
 #DEMOGRAPHICS
@@ -82,7 +83,7 @@ tbl2=data.frame(Source=sample(immune.combined$Manuscript_Identity,5000))
 g12<-ggplot(tbl, aes(x=Age,fill=Sex))+ geom_histogram(stat="count")+theme_minimal()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())+scale_fill_manual(values=c('#919098','#29E7CD'))+labs(y='Count',x='Age')
 g3<-ggplot(tbl, aes(x="", y="", fill=Source)) + geom_bar(stat="identity", width=1) + coord_polar("y") + theme_void()+guides(fill=guide_legend(title="Source (Samples)"))+ theme(legend.position=c(1.2,.5))+scale_fill_manual(values=c('#3E4E50','#FACFAD'))
 g4<-ggplot(tbl2, aes(x="", y="", fill=Source)) + geom_bar(stat="identity", width=1) + coord_polar("y") + theme_void()+guides(fill=guide_legend(title="Source (Cells)"))+ theme(legend.position=c(1.2,.5))+scale_fill_manual(values=c('#3E4E50','#FACFAD'))
-plot_grid(dot,g12,plot_grid(g3,g4),ncol=1,rel_heights = c(2,1,1))+ theme(plot.margin = unit(c(0, 1.5, 0, 0.5), "cm"))
+plot_grid(dot,g12,plot_grid(g3,g4),ncol=1,rel_heights = c(2,1,1))+theme(plot.margin = unit(c(0, 1.5, 0, 0.5), "cm"))
 
 #######################
 ### Cell Type Props ###
@@ -151,7 +152,7 @@ l=load('all_sen_lists.RData')
 #feat_check[['sen']]=unlist(c(senmayolist,cell,fridman,segura,purcell))
 feat_check[['igf']] <- c('PAPPA','IGF1','IGF1R','IGFBP1', 'IGFBP2', 'IGFBP3', 'IGFBP4', 'IGFBP5', 'IGFBP6', 'IGFBP7')
 feat_check[['focal']] <- c('ITGB1','FLNA','ITGA1','ITGA2','PARVA','CACNB2') #Focal adhesion in fibroblasts
-#feat_check[['at2']] <- c('SFTPA1','SFTPA2','SFTPB','SFTPC','ABCA3','HHIP','LAMP3') #Surfactants in AT2
+feat_check[['at2']] <- c('SFTPA1','SFTPA2','SFTPB','SFTPC','ABCA3','HHIP','LAMP3') #Surfactants in AT2
 feat_check[['ifn']] <- c('STAT1','STAT2','IFIT1','JAK2','NLRC5','TXK','PARP9') #Interferon genes in AM
 feat_check[['mtdna']] <- c('MT-ATP8','MT-ATP6','MT-CO1','MT-CO2','MT-CO3','MT-CYB','MT-ND1','MT-ND2','MT-ND3','MT-ND4','MT-ND5','MT-ND6') #mtDNA
 feat_check[['cap']]=c('VIPR1','FENDRR','FOXF1','CA4','F2RL3','IL7R','APLNR','GPIHBP1','FCN3','EDN1','CA4','APLN','EDNRB','HPGD','DKK2','GJA5','SERPINE2','HEY1','EFNB2','ACKR1','PRSS23','VWF') #LGEA
@@ -166,7 +167,7 @@ sub.obj$agebin<-factor(sub.obj$agebin,levels=c('Young','Aged'))
 VlnPlot(sub.obj,features=feat_check[['mtdna']],split.by='agebin')
 
 VlnPlot(sub.obj,features=c('VIPR1','FOXF1','CA4','IL7R','FCN3','HPGD'),split.by='agebin')
-VlnPlot(sub.obj,features=c('VIPR1','IL7R','FCN3','HPGD'),split.by='agebin',cols=c('#253C78','#91C4F2'),ncol=4)&theme(axis.title.x = element_blank())
+VlnPlot(sub.obj,features=c('VIPR1','IL7R','FCN3','HPGD'),split.by='agebin',cols=c('#253C78','#91C4F2'),ncol=4)&theme(axis.title.x = element_blank())&stat_compare_means(label='p.signif')
 
 #DOTPLOT
 Idents(immune.combined)<-immune.combined$predicted.id
@@ -404,12 +405,12 @@ featbox<-ggplot(datalist2, aes(x=factor(column_label,levels=cell.types), y=avg.e
     scale_fill_manual(values=fill_df$color[match(datord,fill_df$predicted.id)])+NoLegend()
 featbox
 
-datalist2<-datalist2 %>% mutate(color=fill_df$color[match(d3$column_label,fill_df$predicted.id)])
+datalist2<-datalist2 %>% mutate(color=fill_df$color[match(datalist2$column_label,fill_df$predicted.id)])
 d3<-datalist2 %>%  mutate(class=factor(immune.combined$comp[match(column_label,immune.combined$predicted.id)],levels=names(comp))) %>% group_by(class)
 d3$column_label=factor(d3$column_label,levels=cell.types)
 featbox<-ggplot(d3, aes(x=column_label, y=avg.exp,group=interaction(factor(id,levels=c('Young','Aged')),column_label))) + geom_boxplot() + theme_classic()+ theme(axis.text.x = element_text(size=12,angle = 45, vjust = 1, hjust=1)) +
     labs(x=NULL, y = "SenMayo Score")+geom_point(aes(color=column_label),position=position_jitterdodge(jitter.width=0.1))+facet_wrap(~ class,nrow=1,scales='free_x')+
-    NoLegend()+scale_color_manual(values=unique(d3$color))
+    NoLegend()+scale_color_manual(values=unique(d3$color))+stat_compare_means(label='p.signif')
 
 #SENESCENCE MAIN FIGURE
 p1<-DimPlot(immune.combined,raster=F,pt.size=0.01,label=T,repel=T,group.by='predicted.id',cols=fill_df$color,order=rev(fill_df$predicted.id))+NoLegend()+labs(title=NULL,x="UMAP 1", y = "UMAP 2")
