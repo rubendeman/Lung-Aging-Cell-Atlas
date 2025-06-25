@@ -35,7 +35,7 @@ if(dir.exists(script.output.dir)==FALSE){
   dir.create(script.output.dir)
 }
 
-jobsub.filepath <- file.path(script.output.dir, "joblist.txt")
+jobsub.filepath <- file.path(script.output.dir, "joblist_global.txt")
 
 rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/GlobalMut/runmodel_global.R"
 
