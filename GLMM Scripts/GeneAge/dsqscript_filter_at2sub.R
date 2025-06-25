@@ -10,8 +10,10 @@ setwd(my.workingDir)
 
 load('/home/rd796/project/ageproj/imm12_10.RData')
 DefaultAssay(immune.combined)<-'RNA'
+immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
+immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
 
-cell.types<-c('AT2B','AT2S')
+cell.types<-c('AT2')
 
 genes.test <- list() #keep genes expressed in greater than 50% of subjects
 for (i in cell.types){
@@ -37,11 +39,12 @@ if(dir.exists(script.output.dir)==FALSE){
   dir.create(script.output.dir)
 }
 
-jobsub.filepath <- file.path(script.output.dir, "joblist.txt")
+jobsub.filepath <- file.path(script.output.dir, "joblist_at2sub.txt")
 
-rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/runmodel_at2sub.R"
+rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/GeneAge/runmodel_at2sub.R"
 
 ### what cell type to test
+cell.types<-c('AT2')
 cellType=cell.types
 
 ### create a new jobsub file before starting
