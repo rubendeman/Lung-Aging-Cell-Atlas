@@ -32,8 +32,8 @@ for(i in 1:length(soup.sample.names)){
 "module load miniconda\n",
 "conda activate SComatic\n",sep="")
                     cmd.out <- paste(cmd.out, 
-                    "ANNOVAR=/home/rd796/project/annovar\n",
-"hummandb=/home/rd796/project/humandb\n",
+                    "ANNOVAR=/annovar\n",
+"hummandb=/humandb\n",
 "grep -v '#' ",soup.sample.dir.paths[i],"/basecall2/",soup.sample.names[i],".calling.step2.pass.tsv | tr '\\t' '-' | awk -F'-' -v OFS='\\t' '{print $1,$2,$3,$4,$5,$0}' > ",soup.sample.dir.paths[i],"/annovar/sample.variants.avinput\n",
 "perl $ANNOVAR/table_annovar.pl ",soup.sample.dir.paths[i],"/annovar/sample.variants.avinput $hummandb -buildver hg38 -out ",soup.sample.dir.paths[i],"/annovar/sample.variants.annovar -remove -protocol refGene,cytoBand,exac03,avsnp147,dbnsfp30a,gnomad_genome -operation g,r,f,f,f,f -nastring . -csvout -polish --otherinfo",
 sep="")
