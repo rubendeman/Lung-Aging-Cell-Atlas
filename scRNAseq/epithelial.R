@@ -8,7 +8,7 @@ library(patchwork)
 library(ggpubr)
 library(ComplexHeatmap)
 
-#EPITHELIUM: USE THE CURRENT SEURAT OBJECT... OR...
+#EPITHELIUM
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
 epi <- subset(immune.combined, idents=comp[['Epithelial']])
 
@@ -20,14 +20,6 @@ epi <- RunUMAP(epi, reduction = "pca", dims = 1:20)
 epi <- FindNeighbors(epi, reduction = "pca", dims = 1:20)
 epi <- FindClusters(epi, resolution = 1)
 DimPlot(epi,label=T,raster=F)+DimPlot(epi,group.by='predicted.id',raster=F,label=T)
-
-#...LOAD the saved one
-load('epi_4_11_24.RData')
-DimPlot(epi)
-epi$predicted.id[epi$predicted.id=='AT2']='AT2B'='SPCʰⁱᵍʰ AT2'
-epi$predicted.id[epi$integrated_snn_res.0.5==9]='AT2S'='SPCˡᵒʷ AT2'
-epi$agebin[epi$agebin=='old']='Aged'
-epi$agebin[epi$agebin=='young']='Young'
 
 #find at2s markers
 #epi=subset(epi,subset=Manuscript_Identity=='Dataset 1')
