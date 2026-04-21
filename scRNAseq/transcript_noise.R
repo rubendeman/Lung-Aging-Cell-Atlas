@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(ggpubr)
@@ -8,6 +7,8 @@ library(Matrix)
 library(pheatmap)
 library(sfsmisc)
 library(MASS)
+
+#LOAD INTEGRATED OBJECT
 
 rscale1=function(x){(x-min(x))/(max(x)-min(x))}
 rscale2=function(x){1-(x-min(x))/(max(x)-min(x))}
