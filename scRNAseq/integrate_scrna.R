@@ -1,4 +1,3 @@
-setwd('/home/rd796/project/ageproj')
 library(Seurat)
 library(ggplot2)
 library(cowplot)
@@ -42,9 +41,6 @@ bm40k.integrated <- ScaleData(bm40k.integrated, verbose = FALSE)
 bm40k.integrated <- RunPCA(bm40k.integrated, npcs=30, verbose = FALSE) #SPECIFY #pcs
 bm40k.integrated <- RunUMAP(bm40k.integrated, dims = 1:30)
 
-#save(bm40k.integrated,file='baylor_int.RData')
-
-l=load('baylor_int.RData')
 lungaging <- bm40k.integrated
 
 #CELL TYPE LABEL TRANSFER
