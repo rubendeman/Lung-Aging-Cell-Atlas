@@ -1,9 +1,8 @@
-setwd('/home/rd796/project/ageproj')
 library(MuSiC)
 library(cowplot)
 library(Biobase)
 
-load('imm12_10.RData') #load integrated
+#LOAD INTEGRATED OBJECT
 
 #PERFORM FILTERING AS IN VAL_SCRNA
 decon.ref<-immune.combined
