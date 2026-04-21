@@ -1,14 +1,13 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(tidyverse)
 library(dplyr)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
-load('/home/rd796/project/ageproj/agingseurat.RData')
+#LOAD INTEGRATED OBJECT
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
