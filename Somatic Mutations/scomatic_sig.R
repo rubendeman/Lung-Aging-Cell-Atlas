@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -7,7 +6,7 @@ library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
 
-input.parent.dir <- "/home/rd796/scratch_public/Backup/Ruben/BaylorFASTQoutput/sample_out"
+input.parent.dir <- ?
 soup.batch.names <- list.files(file.path(input.parent.dir))
 soup.batch.names <- soup.batch.names[!grepl('C',soup.batch.names)] #Remove IPF Cell Atlas
 soup.batch.dir.paths <- as.list(file.path(input.parent.dir, soup.batch.names))
