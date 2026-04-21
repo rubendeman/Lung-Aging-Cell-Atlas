@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -7,7 +6,7 @@ library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
 
-#immune.combined<-subset(immune.combined,subset=Manuscript_Identity=='Dataset 1')
+#LOAD INTEGRATED OBJECT
 
 input.parent.dir <- "/home/rd796/scratch_public/Backup/Ruben/BaylorFASTQoutput/sample_out"
 soup.batch.names <- list.files(file.path(input.parent.dir))
@@ -15,7 +14,6 @@ soup.batch.names <- soup.batch.names[!grepl('C',soup.batch.names)] #Remove IPF C
 soup.batch.dir.paths <- file.path(input.parent.dir, soup.batch.names)
 
 load('emptytbl.RData')
-#load('emptytbl2.RData') #AT2S/AT2B
 calltbl=fulltbl
     for(j in 1:length(soup.batch.names)){
     allmuts<-read.table(file=paste0(soup.batch.dir.paths[j],"/basecall/",soup.batch.names[j],".calling.step2.tsv"), sep='\t')
