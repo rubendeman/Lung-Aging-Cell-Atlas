@@ -44,7 +44,7 @@ bm40k.integrated <- RunUMAP(bm40k.integrated, dims = 1:30)
 lungaging <- bm40k.integrated
 
 #CELL TYPE LABEL TRANSFER
-load('ppsoup.RData') #load IPF cell atlas
+#Load IPF cell atlas
 
 cell.anchors <- FindTransferAnchors(reference = soup.subset, query = lungaging, reduction="rpca", dims = 1:30, k.filter=NA)
 predictions <- TransferData(anchorset = cell.anchors, refdata = soup.subset$Manuscript_Identity, dims = 1:30)
