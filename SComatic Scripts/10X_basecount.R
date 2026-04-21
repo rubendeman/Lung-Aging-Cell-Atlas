@@ -17,8 +17,8 @@ soup.sample.names <- list.files(file.path(sample.parent.dir))
 soup.sample.dir.paths <- file.path(sample.parent.dir, soup.sample.names)
 jobsub.filepath <- file.path(basecount.scripts.dir,"basecount.jobsub.bat")
 
-py.path <- "/home/rd796/project/SComatic-main/scripts/BaseCellCounter/BaseCellCounter.py"
-ref.path <- "/home/rd796/project/GRCh38.primary_assembly.genome.fa"
+py.path <- "SComatic-main/scripts/BaseCellCounter/BaseCellCounter.py"
+ref.path <- "GRCh38.primary_assembly.genome.fa"
 
 ## Wipe the old jobsub.bat file
 cat("",sep="",file=jobsub.filepath, append=FALSE)
