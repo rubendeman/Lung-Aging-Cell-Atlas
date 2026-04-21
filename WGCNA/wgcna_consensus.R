@@ -1,4 +1,3 @@
-setwd('/home/rd796/project/ageproj')
 library(WGCNA)
 library(data.table)
 options(stringsAsFactors = FALSE)
@@ -19,12 +18,12 @@ lclindata[,1]=as.numeric(substr(lclindata[,1],6,6))-1
 lclindata[,2]=as.numeric(substr(lclindata[,2],6,7))
 colnames(lclindata)=c('SEX','AGE','1','2','3','4','5')
 
-annot = data.table(fread("ltrcannot.txt",skip=17, header=TRUE,fill=TRUE))
+annot = data.table(fread("ltrcannot.txt",skip=17, header=TRUE,fill=TRUE)) #load ltrc
 probes=colnames(lagedata)
 probes2annot = match(probes, annot$ID)
 colnames(lagedata)=annot$GENE_SYMBOL[probes2annot]
 
-load(file = "evennewerstep1.RData")
+load(file = "evennewerstep1.RData") #load bulk
 datExpr=log2(agedata3+1)
 datTraits=clindata5
 ids=read.csv('idgenename.csv')
