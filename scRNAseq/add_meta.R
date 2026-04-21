@@ -1,9 +1,7 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(dplyr)
 library(Seurat)
 
-#LOAD INTEGRATED
-load('imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined<-NormalizeData(immune.combined)
