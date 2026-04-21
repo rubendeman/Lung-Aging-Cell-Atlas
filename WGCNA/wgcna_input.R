@@ -1,4 +1,3 @@
-setwd('/home/rd796/project/ageproj')
 library(WGCNA)
 options(stringsAsFactors = FALSE)
 enableWGCNAThreads()
