@@ -1,5 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
-
 colNames <- c("chr","pos","ref","alt","context","coverage","alt_count","tissue","sample_id","subject_id")
 srr_index <- 9
 tab <- read.table('13059_2019_1919_MOESM5_ESM.tsv', sep = "\t", stringsAsFactors = F, header = T)
