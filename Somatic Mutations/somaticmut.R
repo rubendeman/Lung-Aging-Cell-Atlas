@@ -95,7 +95,8 @@ df=as.data.frame(resOrdered)
 dfsig=df[df$pvalue<0.05,]
 dffdr=df[df$padj<0.05,]
 
-datal=read.table(paste0('/home/rd796/palmer_scratch/global/age-glmmTMB_global_newmut2_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
+path = ?
+datal=read.table(paste0(path),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
 datal=datal[!(is.na(datal$Beta1)|is.na(datal$p_val)|!is.na(datal$blank)),]
 datal=mutate(datal,p_val_adj=p.adjust(datal$p_val,method='fdr',n=nrow(datal)))
 datalsig=datal[datal$p_val<0.05,]
