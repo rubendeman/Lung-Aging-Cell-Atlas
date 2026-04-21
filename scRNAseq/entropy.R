@@ -1,10 +1,11 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(ggpubr)
 library(tidyr)
 library(dplyr)
 library(philentropy)
+
+#LOAD INTEGRATED OBJECT
 
 # ENTROPY FUNCTION
 sc.ent.KL.count <- function(X){
