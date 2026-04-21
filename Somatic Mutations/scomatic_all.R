@@ -8,7 +8,7 @@ library(ComplexHeatmap)
 
 #LOAD INTEGRATED OBJECT
 
-input.parent.dir <- "/home/rd796/scratch_public/Backup/Ruben/BaylorFASTQoutput/sample_out"
+input.parent.dir <- ?
 soup.batch.names <- list.files(file.path(input.parent.dir))
 soup.batch.names <- soup.batch.names[!grepl('C',soup.batch.names)] #Remove IPF Cell Atlas
 soup.batch.dir.paths <- file.path(input.parent.dir, soup.batch.names)
