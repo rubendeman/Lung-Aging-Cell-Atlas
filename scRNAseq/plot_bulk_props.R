@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -15,7 +14,7 @@ load('evennewerstep1.RData') #load bulk
 ################################
 # Boxplot - alongside scRNAseq #
 ################################
-load('prop12_15.RData')
+load('prop12_15.RData') #load props
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage','DC'),Lymphoid=c('B','T','Mast','NK'))
 cell.types<-unlist(comp)
 
