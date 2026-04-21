@@ -1,13 +1,13 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(tidyverse)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
-load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
+
 DefaultAssay(immune.combined)<-'RNA'
 genes.test <- rownames(immune.combined)[rowSums(immune.combined@assays$RNA@counts>0)>100] #keep genes expressed in >100 cells
 
@@ -26,13 +26,12 @@ if(dir.exists(script.output.dir)==FALSE){
 
 jobsub.filepath <- file.path(script.output.dir, "joblist.txt")
 
-rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/runmodel.R"
+rscript.function.filepath <- "runmodel.R"
 
 ### what cell type to test
-comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
+comp<-list(Epithelial=c('AT1','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-unlist(comp)
-#cellType=cell.types
-cellType=c('AT2','gCap')
+cellType=cell.types
 
 ### create a new jobsub file before starting
 cat("", sep="", file=jobsub.filepath, append=FALSE)
