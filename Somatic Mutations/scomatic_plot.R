@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -10,16 +9,15 @@ library(ggpubr)
 
 #LOAD DATA
 load('agingseurat.RData')
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
 load('fill_df.RData')
+
+path=?
 
 ##########
 # GLOBAL #
 ##########
 #Read glmmTMB output
-datal=read.table(paste0('/home/rd796/palmer_scratch/global/age-glmmTMB_global_newmut2_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
-#datal=read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_GMUT_GENES/age-glmmTMB_global_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
+datal=read.table(paste0(path),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
 datal=datal[!(is.na(datal$Beta1)|is.na(datal$p_val)|!is.na(datal$blank)),]
 datal=mutate(datal,p_val_adj=p.adjust(datal$p_val,method='fdr',n=nrow(datal)))
 datal=datal[order(datal$p_val,decreasing=F),]
