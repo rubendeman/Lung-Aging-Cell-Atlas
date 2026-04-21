@@ -1,4 +1,3 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(boot)
 library(glmmTMB)
@@ -10,7 +9,7 @@ options(future.globals.maxSize = 5000 * 1024^2)
 options(future.seed=TRUE)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch/GLMM_nozi"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
@@ -20,12 +19,10 @@ cellTypeTest <- inputArguments[1]
 genes.test<- inputArguments[2:length(inputArguments)]
 
 ####### load the seurat object
-l=load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 
 DefaultAssay(immune.combined)<-'RNA'
 
-#immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
-#immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
 immune.combined$predicted.id[immune.combined$predicted.id=='Alv. Fibroblast']='Alv_Fibroblast'
 immune.combined$predicted.id[immune.combined$predicted.id=='Alv. Macrophage']='Alv_Macrophage'
 immune.combined$predicted.id[immune.combined$predicted.id=='Adventitial Fibroblast']='Adv_Fibroblast'
@@ -45,7 +42,7 @@ soup.subset <- subset(immune.combined, subset=predicted.id==cellTypeTest)
 #}
 gc()
 
-########### defining the parameters for yunqing's code
+########### defining the parameters
 gene <- genes.test
 subject <- soup.subset@meta.data$orig.ident
 sf <- soup.subset@meta.data$nCount_RNA
