@@ -42,7 +42,7 @@ if(dir.exists(script.output.dir)==FALSE){
 
 jobsub.filepath <- file.path(script.output.dir, "multi_joblist.txt")
 
-rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/GeneAgeMultiParam/runmodel.R"
+rscript.function.filepath <- "runmodel.R"
 
 ### what cell type to test
 cellType=cell.types
