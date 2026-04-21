@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -6,6 +5,8 @@ library(dplyr)
 library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
+
+#LOAD INTEGRATED OBJECT
 
 #ENDOTHELIUM
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
