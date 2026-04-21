@@ -17,7 +17,7 @@ soup.sample.names <- list.files(file.path(sample.parent.dir))
 soup.sample.dir.paths <- file.path(sample.parent.dir, soup.sample.names)
 jobsub.filepath <- file.path(callable.scripts.dir,"callable.jobsub.bat")
 
-py.path <- "/home/rd796/project/SComatic-main/scripts/GetCallableSites/GetAllCallableSites.py"
+py.path <- "SComatic-main/scripts/GetCallableSites/GetAllCallableSites.py"
 
 ## Wipe the old jobsub.bat file
 cat("",sep="",file=jobsub.filepath, append=FALSE)
