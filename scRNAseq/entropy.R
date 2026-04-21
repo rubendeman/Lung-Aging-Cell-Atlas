@@ -109,7 +109,6 @@ t2=cbind(temp,mdata[match(temp$Ident,rownames(mdata)),])
 ################
 # Load results #
 ################
-load('/home/rd796/scratch_public/Backup/Ruben/Entropy/entropyres_sqrt.RData')
 load('fill_df.RData')
 
 t2$Type[t2$Type=='AT2B']='SPCʰⁱᵍʰ AT2'
