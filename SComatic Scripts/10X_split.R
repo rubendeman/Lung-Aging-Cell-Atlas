@@ -17,8 +17,8 @@ soup.sample.names <- list.files(file.path(sample.parent.dir))
 soup.sample.dir.paths <- file.path(sample.parent.dir, soup.sample.names)
 jobsub.filepath <- file.path(split.scripts.dir,"split.jobsub.bat")
 
-py.path <- "/home/rd796/project/SComatic-main/scripts/SplitBam/SplitBamCellTypes.py"
-meta.path <- "/home/rd796/project/ageproj/meta_scomatic.tsv"
+py.path <- "SComatic-main/scripts/SplitBam/SplitBamCellTypes.py"
+meta.path <- "meta_scomatic.tsv"
 
 ## Wipe the old jobsub.bat file
 cat("",sep="",file=jobsub.filepath, append=FALSE)
