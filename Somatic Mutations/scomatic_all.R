@@ -106,8 +106,8 @@ fill_df$predicted.id[fill_df$predicted.id=='Alv. Fibroblast']='Fibroblast'
 gfg_data <- data.frame(Age=ages,log10(t(burdtbl)))
 #gfg_data <- gfg_data[,-match(gfg_sum$name[gfg_sum$len<5],colnames(gfg_data))]
 gfg_data <- gfg_data[,c('Age','Aerocyte','Alv..Macrophage','AT1','AT2','Ciliated','gCap','Macrophage','Monocyte')]
+gfg_data <- gfg_data[gfg_sample$mut>=9,]
 gfg_data <- gfg_data[gfg_sample$mut<300,] #READ: REMOVE 367 d/t high burden
-#gfg_data <- gfg_data[gfg_sample$mut<2000,] #READ: REMOVE 367 d/t high burden
 apply(gfg_data,2,function(x){cor(x,gfg_data$Age,use='pairwise.complete.obs')})
 #apply(gfg_data,2,function(x){corPvalueStudent(cor(x,gfg_data$Age,use='pairwise.complete.obs'),sum(!is.na(x)))})
 gfg_data <- pivot_longer(gfg_data,!Age)
