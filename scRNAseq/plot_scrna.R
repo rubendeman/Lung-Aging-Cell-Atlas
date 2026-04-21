@@ -89,8 +89,8 @@ plot_grid(dot,g12,plot_grid(g3,g4),ncol=1,rel_heights = c(2,1,1))+theme(plot.mar
 ### Cell Type Props ###
 #######################
 y1<-as.data.frame(cbind(immune.combined@meta.data$orig.ident,immune.combined@meta.data$predicted.id,immune.combined@meta.data$age))
-y2=y1 %>% group_by(V1,V2) %>% summarise(V4=length(V1),V5=max(V3));
-y3=y2 %>% group_by(V2) %>% summarise(V7=list(V1),V8=list(V4),V9=list(V5));
+y2=y1 %>% group_by(V1,V2) %>% summarise(V4=length(V1),V5=max(V3))
+y3=y2 %>% group_by(V2) %>% summarise(V7=list(V1),V8=list(V4),V9=list(V5))
 sids<-as.character(as.data.frame(table(immune.combined@meta.data$orig.ident))$Var1)
 ind=apply(y3,1,function(x){unlist(x[3])[match(sids,unlist(x[2]))]}) #Create table of cell type versus sample
 colnames(ind)<-y3$V2
@@ -109,7 +109,7 @@ demo=as.data.frame(cbind(count=apply(ind,1,function(x){sum(x,na.rm=T)}),age=immu
 #or
 for (i in 1:5){ind[,comp[[i]]]<-ind[,comp[[i]]]/demo_sub[,i]} #Convert ind from raw counts to sub props
 
-p=list();
+p=list()
 for (i in 1:5){
 cormat2<-na.omit(as.data.frame(pivot_longer(as.data.frame(cbind(age=demo$age,ind[,comp[[i]]])),!age)))
 vage<-cormat2$name
@@ -181,13 +181,13 @@ cell.types='AT2'
 genes = feats = 'SFTPC'
 cellorgene<-'gene'
 DefaultAssay(immune.combined)<-'RNA'
-datalist = list(); #Empty list for results
+datalist = list() #Empty list for results
 type=cell.types
 #Iterate through cell types
 for (i in 1:length(type)){
-celltype=type[i];
+celltype=type[i]
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
-tmp=subset(immune.combined, subset=(predicted.id %in% celltype));
+tmp=subset(immune.combined, subset=(predicted.id %in% celltype))
 #DotPlot
 Idents(tmp)<-tmp@meta.data$orig.ident
 a<-DotPlot(tmp,features=genes,scale=F)
@@ -198,7 +198,7 @@ newdata2=newdata %>% group_by(id) %>% summarise(avg=mean(avg.exp),pct=mean(pct.e
 
 #or AverageExpression
 #avgexp<-as.data.frame(AverageExpression(tmp,assays='RNA',genes,group.by = c('orig.ident','agebin'))$RNA)
-#avgexp=t(apply(avgexp,1,function(x){(x-min(x))/(max(x)-min(x))})) #IMPORTANT; SCALE to 0-1
+#avgexp=t(apply(avgexp,1,function(x){(x-min(x))/(max(x)-min(x))})) #IMPORTANT: SCALE to 0-1
 #avgexp=data.frame(gene=genes,avgexp)
 #newdata=pivot_longer(avgexp,!gene)
 #newdata=as.data.frame(as.matrix(within(newdata, name<-data.frame(do.call('rbind', strsplit(as.character(name), '_', fixed=TRUE))))))
@@ -210,7 +210,7 @@ datalist[[i]]=newdata
 names(datalist)=type
 
 datalist2<-bind_rows(datalist, .id = "column_label")
-datalist2<-datalist2[datalist2$avg.exp!=0,] #IMPORTANT; DROP 0 EXPRESSION
+datalist2<-datalist2[datalist2$avg.exp!=0,] #IMPORTANT: DROP 0 EXPRESSION
 if(cellorgene=='gene'){datalist2$column_label=datalist2$features.plot}
 featbox<-ggplot(datalist2, aes(x=column_label, y=avg.exp,fill=factor(id,levels=c('Young','Aged')))) + geom_boxplot() + theme_classic()+ theme(axis.text.x = element_text(size=12,angle = 45, vjust = 1, hjust=1)) +
     labs(x=NULL, y = "Gene Expression")+guides(fill=guide_legend(title=NULL))+geom_point(position=position_jitterdodge(jitter.width=0.1))
@@ -364,7 +364,8 @@ axis(1,pos=0)
 sum(immune.combined@meta.data$SenMayo1>thresh)
 ages3  <- vector(mode='character',length=length(immune.combined@meta.data$SenMayo1))
 for (x in 1:length(immune.combined@meta.data$SenMayo1)) {
-    val=immune.combined@meta.data$SenMayo1[x]; if (val<thresh){ages3[x]="Low SenMayo";} else {ages3[x]="High SenMayo";}
+    val=immune.combined@meta.data$SenMayo1[x]
+    if (val<thresh){ages3[x]="Low SenMayo"} else {ages3[x]="High SenMayo"}
 }
 table(ages3)
 immune.combined <- AddMetaData(object = immune.combined, metadata = ages3, col.name = 'senbin')
@@ -378,13 +379,13 @@ ggplot(data, aes(x = ct,y = sm)) + geom_boxplot() + coord_flip()+theme_minimal()
 genes = feats = 'SenMayo1'
 cellorgene<-'cell'
 DefaultAssay(immune.combined)<-'RNA'
-datalist = list(); #Empty list for results
+datalist = list() #Empty list for results
 type=cell.types
 #Iterate through cell types
 for (i in 1:length(type)){
-celltype=type[i];
+celltype=type[i]
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
-tmp=subset(immune.combined, subset=(predicted.id %in% celltype));
+tmp=subset(immune.combined, subset=(predicted.id %in% celltype))
 #DotPlot
 Idents(tmp)<-tmp@meta.data$orig.ident
 a<-DotPlot(tmp,features=genes,scale=F)
@@ -519,17 +520,17 @@ draw(ht, padding = unit(c(8, 2, 2, 8), "mm"),merge_legends=T)
 ##################
 # P16 Expression #
 ##################
-datalist = list();
+datalist = list()
 type=cell.types
 #Iterate through cell types
 for (i in 1:length(type)){
-celltype=type[i];
+celltype=type[i]
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
-tmp=subset(immune.combined, idents = celltype);
-Idents(tmp)=tmp@meta.data$agebin;
+tmp=subset(immune.combined, idents = celltype)
+Idents(tmp)=tmp@meta.data$agebin
 DefaultAssay(tmp)<-'RNA'
-agegenes <- FindMarkers(tmp, features='CDKN2A', ident.1 = "old", ident.2 = "young", logfc.threshold = 0, min.pct = 0,verbose = FALSE);
-datalist[[i]]=na.omit(agegenes);
+agegenes <- FindMarkers(tmp, features='CDKN2A', ident.1 = "old", ident.2 = "young", logfc.threshold = 0, min.pct = 0,verbose = FALSE)
+datalist[[i]]=na.omit(agegenes)
 }
 names(datalist)=type
 
@@ -555,7 +556,7 @@ p + theme_classic()+theme(text = element_text(size=15)) + scale_y_continuous(lim
 ### TARGETED GENE AGE COR ###
 #############################
 #Corrected by #cells each subject. Later, let's also look at # sen cells per subject VS age
-sencell=c('CDKN1A','HHIP','GLB1','NEU1','IGFBP7','QDPR');
+sencell=c('CDKN1A','HHIP','GLB1','NEU1','IGFBP7','QDPR')
 corv = list()
 pv=list()
 nn=list()

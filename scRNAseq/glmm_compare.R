@@ -12,7 +12,7 @@ library(stringr)
 #read glmmTMB output
 comp<-list(Epithelial=c('AT1','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-as.list(unlist(comp)); names(cell.types)<-cell.types
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/palmer_scratch/GLMM_nozi/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES_v2/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
@@ -23,14 +23,43 @@ datalsig<-lapply(datal,function(x){x[x$p_val_adj<0.05,]})
 
 #Load libra out
 #load('/home/rd796/palmer_scratch/libra_out.RData')
-load('/home/rd796/palmer_scratch/libra_out_hisample_at2sub.RData')
+load('/home/rd796/project/ageproj/libra_out_hisample_at2sub.RData')
 res.t<-res.t[order(res.t$p_val_adj),]
 res.t<-res.t[res.t$p_val<1,]
 datal2<-split(res.t,res.t$cell_type)
 datal2sig<-lapply(datal2,function(x){x[x$p_val<0.05,]})
 
+#GLMM, VERSUS ...
+load('fill_df.RData')
+ups_data=lapply(datal,function(x){rownames(x[x$p_val<0.05,])})
+lmat=data.frame(Cell=names(ups_data),Diff=sapply(ups_data,length),Number=sapply(datal,nrow))
+lmat=lmat %>% mutate(PerDiff=Diff/Number)
+lmat=lmat %>% mutate(color=fill_df$color[match(lmat$Cell,fill_df$predicted.id)])
+lmat=lmat[order(lmat$PerDiff,decreasing=T),]
+lmat$Cell=factor(lmat$Cell,levels=lmat$Cell)
+lmat$PerDiff=lmat$PerDiff*100
+g1<-ggplot(lmat, aes(y = PerDiff, x = factor(Cell, levels=Cell[order(PerDiff)]), fill=Cell)) +
+    geom_bar(stat = "identity")+theme_minimal()+theme(axis.line.x=element_line(size=1),panel.grid.major = element_blank(),panel.grid.minor = element_blank())+NoLegend()+
+    labs(x="Cell Type", y = "% Differentially Expressed Genes", fill=NULL)+coord_flip()+scale_fill_manual(values=lmat$color)
+
+#PSEUDOBULK
+load('fill_df.RData')
+ups_data=lapply(datal2,function(x){rownames(x[x$p_val<0.05,])})
+lmat=data.frame(Cell=names(ups_data),Diff=sapply(ups_data,length),Number=sapply(datal2,nrow))
+lmat=lmat %>% mutate(PerDiff=Diff/Number)
+lmat=lmat %>% mutate(color=fill_df$color[match(lmat$Cell,fill_df$predicted.id)])
+lmat=lmat[order(lmat$PerDiff,decreasing=T),]
+lmat$Cell=factor(lmat$Cell,levels=lmat$Cell)
+lmat$PerDiff=lmat$PerDiff*100
+g2<-ggplot(lmat, aes(y = PerDiff, x = factor(Cell, levels=Cell[order(PerDiff)]), fill=Cell)) +
+    geom_bar(stat = "identity")+theme_minimal()+theme(axis.line.x=element_line(size=1),panel.grid.major = element_blank(),panel.grid.minor = element_blank())+NoLegend()+
+    labs(x="Cell Type", y = "% Differentially Expressed Genes", fill=NULL)+coord_flip()+scale_fill_manual(values=lmat$color)
+g1+g2
+
 #Compare
-cell.types=c('AT1','gCap','Aerocyte','Alv. Macrophage','SMC','Adventitial Fibroblast','Myofibroblast','Venous','Arterial','Lymphatic')
+#kept only cell types with at least 5 gene intersection
+#cell.types=c('AT1','AT2B','Ciliated','Club','Aerocyte','gCap','Arterial','Venous','Myofibroblast','SMC','Pericyte')
+cell.types=names(datal2sig)
 int=lapply(cell.types,function(x){intersect(datalsig[[x]]$Gene,datal2sig[[x]]$gene)})
 names(int)<-cell.types
 intsign1<-lapply(cell.types,function(x){sign(datalsig[[x]]$Beta1[match(int[[x]],datalsig[[x]]$Gene)])})
@@ -41,14 +70,24 @@ names(intsign2)<-cell.types
 unlist(lapply(cell.types,function(x){paste(x,nrow(datalsig[[x]]),length(int[[x]]))}))
 
 #FET
+fetlist=list()
 for (x in cell.types){
 f1=length(intersect(datalsig[[x]]$Gene,datal2sig[[x]]$gene)) #overlap
 f2=length(intersect(datal[[x]]$Gene,datal2sig[[x]]$gene))-f1 #in a not b
 f3=length(intersect(datalsig[[x]]$Gene,datal2[[x]]$gene))-f1 #in b not a
-f4=length(intersect(datal[[x]]$Gene,datal2[[x]]$gene))-f1-f2-f3 #in b not a
+f4=length(intersect(datal[[x]]$Gene,datal2[[x]]$gene))-f1-f2-f3 #in neither
 matrix <- matrix(c(f1, f2, f3, f4), nrow=2)
+fetlist[[x]]=fisher.test(matrix, alternative="greater")
 print(fisher.test(matrix, alternative="greater"))
 }
+
+#CREATE AN OUTPUT
+output=as.data.frame(t(sapply(cell.types,function(x){c(nrow(datalsig[[x]]),nrow(datal2sig[[x]]),length(int[[x]]))})))
+output=output%>%mutate(f1=sapply(fetlist,function(x){x$estimate}),f2=sapply(fetlist,function(x){x$p.value}))
+names(output)<-c('GLMM Genes','LRT Genes','Overlap Genes','Odds Ratio','p-value')
+filename='SuppData4_HPC_OVERLAP_AGE_GENES.xlsx'
+library(openxlsx)
+write.xlsx(output, filename)
 
 #UPSETS
 library(UpSetR)
@@ -61,15 +100,14 @@ noquote(datalsig[['Myofibroblast']]$Gene[datalsig[['Myofibroblast']]$Beta1<0]) #
 intersect(datalsig[['gCap']]$Gene[datalsig[['gCap']]$Beta1<0],datalsig[['Aerocyte']]$Gene[datalsig[['Aerocyte']]$Beta1<0])
 
 
+#BIG MAP BY SAMPLE (NEW)
+
 #Load Seurat
 load('agingseurat.RData')
 #immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
 #immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
 load('fill_df.RData')
 
-
-
-#BIG MAP BY SAMPLE (NEW)
 cell.types='gCap'
 mincells=3
 ht=NULL

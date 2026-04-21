@@ -9,7 +9,7 @@ library(gprofiler2)
 #read glmmTMB output
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-as.list(unlist(comp)); names(cell.types)<-cell.types
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/palmer_scratch/GLMM_nozi/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES_v2/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
@@ -110,7 +110,7 @@ kmat=kmat[1:5,]
 kmat$term_name<-factor(kmat$term_name,levels=rev(kmat$term_name))
 u1<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
     scale_fill_gradient(low='grey',high='yellow',limits=c(0,max(-log10(kmat$p_value))))+ geom_text(aes(label = term_name,hjust=1)) + 
-    theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='REAC Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
+    theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='Enrichment Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
 u1
 
 golist=dngenes
@@ -119,10 +119,12 @@ kres=go_out$result[go_out$result$source%in%c('KEGG','REAC'),]
 kres=kres[order(kres$p_value,decreasing=F),]
 kmat=kres[,c(3,11)]
 if(nrow(kmat)>10){kmat<-kmat[1:12,]}
-kmat=kmat[c(1,2,8,11),]
+kmat=kmat[c(1,2,8,10,11),]
 kmat$term_name<-factor(kmat$term_name,levels=rev(kmat$term_name))
+kmat=kmat %>% mutate(place = if_else(row_number() <4, 1, 0))
+kmat=kmat %>% mutate(color = if_else(row_number() <4, 'white', 'black')) 
 u2<-ggplot(kmat, aes(x = -log10(p_value), y = term_name, fill=-log10(p_value))) + geom_col() +
-    scale_fill_gradient(low='grey',high='purple',limits=c(0,max(-log10(kmat$p_value))))+ geom_text(aes(label = term_name,hjust=1)) + 
-    theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='REAC Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
+    scale_fill_gradient(low='grey',high='purple',limits=c(0,max(-log10(kmat$p_value))))+ geom_text(aes(label = term_name),hjust=kmat$place,colour=kmat$color) + 
+    theme_classic()+theme(legend.position="right",axis.text.y=element_blank())+labs(x='-log10(p-value)',y='Enrichment Term')+ guides(fill=guide_legend(title="-log10(p-value)"))
 u2
 plot_grid(u1,u2,ncol=1)
