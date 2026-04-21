@@ -6,7 +6,7 @@ my.workingDir <- ?
 
 setwd(my.workingDir)
 
-load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
