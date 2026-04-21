@@ -1,4 +1,3 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(boot)
 library(glmmTMB)
@@ -10,7 +9,7 @@ options(future.globals.maxSize = 5000 * 1024^2)
 options(future.seed=TRUE)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch/cell"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
@@ -20,7 +19,7 @@ cellTypeTest <- inputArguments[1]
 genes.test<- inputArguments[2:length(inputArguments)]
 
 ####### load the seurat object
-l=load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 
 DefaultAssay(immune.combined)<-'RNA'
 
@@ -34,7 +33,7 @@ comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothel
 cell.types<-unlist(comp)
 immune.combined<-subset(immune.combined,subset=predicted.id %in% cell.types,invert=F)
 
-load('/home/rd796/project/ageproj/cellmutmatv2.RData')
+#LOAD MUTATIONS
 
 colnames(gfg_data)<-c('Fibroblast','Alv_Macrophage','Aerocyte','Arterial','AT1','AT2','B','Basal','Ciliated','Club','DC','gCap','Goblet','Lymphatic','Macrophage','Monocyte','Myofibroblast','NK','Peribronchial','Pericyte','SMC','T','Venous')
 
