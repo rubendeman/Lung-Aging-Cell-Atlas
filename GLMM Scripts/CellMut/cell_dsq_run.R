@@ -1,13 +1,12 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(tidyverse)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch/cell"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
-load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
@@ -46,7 +45,7 @@ if(dir.exists(script.output.dir)==FALSE){
 
 jobsub.filepath <- file.path(script.output.dir, "joblist_cell.txt")
 
-rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/CellMut/runmodel_cell.R"
+rscript.function.filepath <- "runmodel_cell.R"
 
 ### create a new jobsub file before starting
 cat("", sep="", file=jobsub.filepath, append=FALSE)
