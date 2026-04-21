@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -6,11 +5,14 @@ library(dplyr)
 library(stringr)
 library(gprofiler2)
 
+#Add path to GLMM output
+path=?
+
 #read glmmTMB output
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-as.list(unlist(comp)); names(cell.types)<-cell.types
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES_v2/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
-#datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0(path,x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+#datal=lapply(cell.types,function(x){read.table(paste0(path,x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
 datal=lapply(datal,function(x){mutate(x,p_val_adj=p.adjust(x$p_val,method='fdr',n=nrow(x)))})
@@ -69,35 +71,6 @@ rnk=order(colMeans(rbind(match(upgenes, data_upset[[ct[1]]]),match(upgenes, data
 data_upset=lapply(datal,function(x){x$Gene[x$p_val<0.05&x$Beta1>0]}) #DN
 dngenes=Reduce(intersect,data_upset[ct])
 rnk=order(colMeans(rbind(match(dngenes, data_upset[[ct[1]]]),match(dngenes, data_upset[[ct[2]]]))))
-
-#Query autophagy genes
-ct=c('Aerocyte','gCap','Arterial','Venous','AT1','AT2')
-library(openxlsx)
-ubq=lapply(list(2,3,4,5,6),function(x){read.xlsx('Ge_UBQ.xlsx',sheet=x,cols=1,skipEmptyRows=T)})
-names(ubq)<-c('E1','E2','E3 Activity','E3 Adapter','DUB')
-auto=lapply(list(1,2,3,4,5,6,7),function(x){read.xlsx('Bordi_Autophagy.xlsx',sheet=x,cols=1,skipEmptyRows=T)})
-names(auto)<-c('mTOR','Core','Reg','Mitophagy','Docking','Lysosome','Lysosome Genes')
-auto=c(ubq,auto)
-auto2=lapply(ct,function(y){lapply(auto,function(x){na.omit(data.frame(gene=datal[[y]]$Gene[match(x[,1],datal[[y]]$Gene)],beta1=datal[[y]]$Beta1[match(x[,1],datal[[y]]$Gene)]*-1,pv=datal[[y]]$p_val[match(x[,1],datal[[y]]$Gene)]))})})
-names(auto2)<-ct
-auto2[["gCap"]][["mTOR"]]
-
-#Query marker genes
-ct=c('Aerocyte','gCap','Arterial','Venous','AT1','AT2')
-auto=c(Cap=list(data.frame(Gene=c('IL7R','FCN3','EDN1','APLNR','TEK','CA4','EDNRB','FENDRR','VIPR1','APLNR','APLN','HPGD'))),Art=list(data.frame(Gene=c('DKK2','GJA5','ACKR1'))),Pan=list(data.frame(Gene=c('PECAM1','SOX17','CD34','CDH5','VWF'))),
-AT1=list(data.frame(Gene=c('HOPX','AGER','RTKN2'))),AT2=list(data.frame(Gene=c('SFTPC','LAMP3','SLC34A2','SFTPB','SFTPA1'))))
-auto2=lapply(ct,function(y){lapply(auto,function(x){na.omit(data.frame(gene=datal[[y]]$Gene[match(x[,1],datal[[y]]$Gene)],beta1=datal[[y]]$Beta1[match(x[,1],datal[[y]]$Gene)],pv=datal[[y]]$p_val[match(x[,1],datal[[y]]$Gene)]))})})
-names(auto2)<-ct
-auto2[["AT1"]][["AT1"]]
-
-#Query NK collab
-ct=c('AT1','AT2','Alv. Fibroblast','Adventitial Fibroblast','SMC','Myofibroblast')
-auto=c(genes=list(data.frame(Gene=c('MIA3','MIA2','SEC23A','SEC23B','SEC13','SEC31A','SAR1A','SAR1B','SEC23IP','TFG','TUG1','ALG2','SERPINH1','SEC16A','SEC16B','PREB',
-'RINT1','ZW10','NBAS','SCFD1','VPS13B','ATG2A','SEC22A','SEC22B','GOLGA6A','DYM','TXNDC5','EXPH5','CUL3','KLHL12','TMEM131','TMEM39A','TMED1','TMED2','TMED3','TMED4','TMED5','TMED6','TMED7','TMED9','TMED10','SURF4',
-'CNI1','TRAPPC3','TRAPPC2','RAB1A','RAB1B','RAB2A','USO1'))))
-auto2=lapply(ct,function(y){lapply(auto,function(x){(data.frame(gene=datal[[y]]$Gene[match(x[,1],datal[[y]]$Gene)],beta1=datal[[y]]$Beta1[match(x[,1],datal[[y]]$Gene)],pv=datal[[y]]$p_val[match(x[,1],datal[[y]]$Gene)]))})})
-names(auto2)<-ct
-auto3=as.data.frame(auto2)
 
 #GO
 golist=upgenes
