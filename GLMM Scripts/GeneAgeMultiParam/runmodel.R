@@ -1,4 +1,3 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(boot)
 library(glmmTMB)
@@ -10,7 +9,7 @@ options(future.globals.maxSize = 5000 * 1024^2)
 options(future.seed=TRUE)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch/multi"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
@@ -21,7 +20,7 @@ cellTypeTest <- inputArguments[2]
 genes.test<- inputArguments[3:length(inputArguments)]
 
 ####### load the seurat object
-l=load('/home/rd796/project/ageproj/agingseurat.RData')
+#LOAD INTEGRATED OBJECT
 
 DefaultAssay(immune.combined)<-'RNA'
 immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
