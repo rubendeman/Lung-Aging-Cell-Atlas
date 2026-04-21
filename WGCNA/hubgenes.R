@@ -1,4 +1,3 @@
-setwd('/home/rd796/project/ageproj')
 library(WGCNA)
 
 load('geneInfo0.RData') #load module genes
