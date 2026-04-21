@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(ggpubr)
@@ -8,26 +7,7 @@ library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
 
-load('imm12_10.RData') #load integrated
-
-DefaultAssay(immune.combined)<-'RNA'
-immune.combined<-NormalizeData(immune.combined)
-
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
-immune.combined$Manuscript_Identity[immune.combined$Manuscript_Identity=='Baylor']<-'Dataset 1'
-immune.combined$Manuscript_Identity[immune.combined$Manuscript_Identity=='IPF Cell Atlas']<-'Dataset 2'
-immune.combined$agebin[immune.combined$agebin=='old']<-'Aged'
-immune.combined$agebin[immune.combined$agebin=='young']<-'Young'
-
-comp<-list(Epithelial=c('AT1','AT2','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage','DC'),Lymphoid=c('B','T','Mast','NK'))
-cell.types<-unlist(comp)
-
-immune.combined<-subset(immune.combined,subset=predicted.id %in% cell.types,invert=F)
-
-comp_data<-immune.combined$predicted.id
-for(i in names(comp)){comp_data[comp_data %in% comp[[i]]]<-i}
-immune.combined<-AddMetaData(immune.combined,comp_data,col.name='comp')
+#LOAD INTEGRATED OBJECT
 
 #set.seed(1)
 #fill_df <- immune.combined@meta.data %>% select('predicted.id','comp') %>% unique() %>% mutate(color = sample(scales::hue_pal()(25)))
