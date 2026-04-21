@@ -1,4 +1,3 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(boot)
 library(glmmTMB)
@@ -10,7 +9,7 @@ options(future.globals.maxSize = 5000 * 1024^2)
 options(future.seed=TRUE)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch/global"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
@@ -19,7 +18,7 @@ inputArguments <- commandArgs(trailingOnly=TRUE)
 genes.test<- inputArguments[1:length(inputArguments)]
 
 ####### load the seurat object
-l=load('/home/rd796/project/ageproj/imm12_10.RData')
+#LOAD INTEGRATED OBJECT
 
 DefaultAssay(immune.combined)<-'RNA'
 
@@ -33,11 +32,11 @@ comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothel
 cell.types<-unlist(comp)
 immune.combined<-subset(immune.combined,subset=predicted.id %in% cell.types,invert=F)
 
-load('/home/rd796/project/ageproj/mutmat.RData')
+#LOAD MUTATIONS
 soup.subset<-subset(immune.combined,subset=orig.ident%in%rownames(gfg_sample))
 soup.subset<-AddMetaData(soup.subset,metadata=gfg_sample$b[match(soup.subset$orig.ident,rownames(gfg_sample))],col.name='mut')
 
-########### defining the parameters for yunqing's code
+########### defining the parameters
 gene <- genes.test
 subject <- soup.subset@meta.data$orig.ident
 sf <- soup.subset@meta.data$nCount_RNA
