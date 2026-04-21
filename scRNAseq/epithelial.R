@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(tidyr)
@@ -7,6 +6,8 @@ library(cowplot)
 library(patchwork)
 library(ggpubr)
 library(ComplexHeatmap)
+
+#LOAD INTEGRATED OBJECT
 
 #EPITHELIUM
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
