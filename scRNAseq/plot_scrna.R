@@ -431,8 +431,9 @@ draw(ht, padding = unit(c(2, 2, 24, 10), "mm"))
 # Senescence-correlated genes #
 ###############################
 #read glmmTMB output
+path = ?
 cell.types<-c('AT2','gCap')
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/palmer_scratch/senage/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0(path,x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
 datal=lapply(datal,function(x){mutate(x,p_val_adj=p.adjust(x$p_val,method='fdr',n=nrow(x)))})
 datal=lapply(datal,function(x){x[order(x$p_val,decreasing=F),]})
