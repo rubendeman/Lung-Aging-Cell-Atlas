@@ -7,6 +7,8 @@ library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
 
+#LOAD INTEGRATED OBJECT
+
 #Mesenchyme
 Idents(immune.combined)=immune.combined@meta.data$predicted.id
 mes <- subset(immune.combined, idents=comp[['Mesenchymal']])
