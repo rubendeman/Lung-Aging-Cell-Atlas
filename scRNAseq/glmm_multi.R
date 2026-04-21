@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(ggpubr)
@@ -7,6 +6,9 @@ library(dplyr)
 library(cowplot)
 library(patchwork)
 library(ComplexHeatmap)
+
+#Add path to GLMM output
+path=?
 
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage','DC'),Lymphoid=c('B','T','Mast','NK'))
 cell.types<-unlist(comp)
@@ -17,11 +19,9 @@ comparisons<-c('Late-Aged','Early-Aged','Male','Female','1','2','Yes','No')
 datal=list()
 for(k in comparisons){
 for(j in cell.types){
-    datal[[paste(j,k)]]<-read.table(paste0('/home/rd796/palmer_scratch/multi/age-glmmTMB_',k,'_',j,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
+    datal[[paste(j,k)]]<-read.table(paste0(path,k,'_',j,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)
 }
 }
-#datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
-#datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
 datal=lapply(datal,function(x){mutate(x,p_val_adj=p.adjust(x$p_val,method='fdr',n=nrow(x)))})
 datal=lapply(datal,function(x){x[order(x$p_val,decreasing=F),]})
@@ -63,7 +63,6 @@ immune.combined$agetri[immune.combined$agetri=='Middle-Aged']<-'Early-Aged'
 immune.combined$agetri[immune.combined$agetri=='Aged']<-'Late-Aged'
 immune.combined$agetri<-factor(immune.combined$agetri,levels=c('Young','Early-Aged','Late-Aged'))
 load('fill_df.RData')
-
 
 
 #BIG MAP BY SAMPLE (NEW)
@@ -160,7 +159,6 @@ ht0=Heatmap(na.omit(avgexp), name = "Expression",  column_split=data.frame(ann$V
 draw(ht, padding = unit(c(2, 2, 2, 5), "mm"),merge_legend=T,ht_gap=unit(0.1,'cm'))
 
 
-
 #BIG MAP BY SAMPLE (NEWER)
 cell.types=c('AT1','AT2','gCap')
 freqs=c(3,10,10); names(freqs)=cell.types
@@ -177,7 +175,6 @@ picklist=picklist[match(unique(picklist$gene),picklist$gene),]
 nrsplit0=picklist %>% group_by (source) %>% summarise(length(source))
 colnames(nrsplit0)<-c('source','length')
 nrsplit1=nrsplit0$length[match(conds,nrsplit0$source)]
-
 
 feats=picklist$gene
 rowsplit=rep(conds,nrsplit1)
