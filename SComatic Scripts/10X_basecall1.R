@@ -17,12 +17,12 @@ soup.sample.names <- list.files(file.path(sample.parent.dir))
 soup.sample.dir.paths <- file.path(sample.parent.dir, soup.sample.names)
 jobsub.filepath <- file.path(basecall.scripts.dir,"basecall1.jobsub.bat")
 
-py.path1 <- "/home/rd796/project/SComatic-main/scripts/MergeCounts/MergeBaseCellCounts.py"
-py.path2 <- "/home/rd796/project/SComatic-main/scripts/BaseCellCalling/BaseCellCalling.step1.py"
-py.path3 <- "/home/rd796/project/SComatic-main/scripts/BaseCellCalling/BaseCellCalling.step2.py"
-ref.path <- "/home/rd796/project/GRCh38.primary_assembly.genome.fa"
-editing='/home/rd796/project/SComatic-main/RNAediting/AllEditingSites.hg38.txt'
-PON='/home/rd796/project/SComatic-main/PoNs/PoN.scRNAseq.hg38.tsv'
+py.path1 <- "SComatic-main/scripts/MergeCounts/MergeBaseCellCounts.py"
+py.path2 <- "SComatic-main/scripts/BaseCellCalling/BaseCellCalling.step1.py"
+py.path3 <- "SComatic-main/scripts/BaseCellCalling/BaseCellCalling.step2.py"
+ref.path <- "GRCh38.primary_assembly.genome.fa"
+editing='SComatic-main/RNAediting/AllEditingSites.hg38.txt'
+PON='SComatic-main/PoNs/PoN.scRNAseq.hg38.tsv'
 
 ## Wipe the old jobsub.bat file
 cat("",sep="",file=jobsub.filepath, append=FALSE)
