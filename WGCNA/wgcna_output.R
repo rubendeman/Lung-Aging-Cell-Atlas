@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(WGCNA)
 #options(stringsAsFactors = FALSE)
 #enableWGCNAThreads()
