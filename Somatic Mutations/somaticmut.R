@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(ggplot2)
 library(dplyr)
 library(WGCNA)
@@ -154,46 +153,3 @@ lbl=rbind(colnames(lbl),lbl)
 ll=cbind(NA,ll)
 f=c(1,f+1)
 forestplot(col = fpColors(all.elements="black"),fn.ci_norm = fpDrawCircleCI,lwd.ci=2,lbl,t(ll)[f,],zero=0,is.summary = c(TRUE, rep(FALSE, 19)),xlab="Z-score",txt_gp = fpTxtGp(xlab=gpar(cex=1),ticks=gpar(cex=1)),boxsize=0.5,xticks=seq(from = -0.4, to = 0.4, by = 0.2))
-
-#WGCNA HEATMAP
-meow5=na.omit(cbind(memut,mutburden))
-#moduleTraitCor = cor(meow5[,1:133], cbind(meow5[,134],meow5[,136]), use = "p")
-cor1=cor(meow5[,1:133], meow5[,135], use = "p")
-cor1 =cor1[order(as.numeric(substring(rownames(cor1),3))),]
-cor1 =as.matrix(cor1)[2:133]
-cor2=cor(MEs,clindata5$AGE,use="p")
-cor2 =cor2[order(as.numeric(substring(rownames(cor2),3))),]
-cor2 =as.matrix(cor2)[2:133]
-cor3=cor2 #from plotscrna
-moduleTraitCor = cbind(cor1,cor2,cor3)
-moduleTraitPvalue = cbind(p.adjust(corPvalueStudent(cor1, nrow(meow5)),method="fdr"),p.adjust(corPvalueStudent(cor2, nrow(clindata5)),method="fdr"),p.adjust(corPvalueStudent(cor2, nrow(clindata5)),method="fdr"))
-moduleTraitPvalue=cbind(moduleTraitPvalue,fetlist[,6])
-moduleTraitPvalue=cbind(moduleTraitPvalue,matrix(1,132,1))
-rownames(moduleTraitPvalue)=paste("ME",(1:(ncol(MEs)-1)))
-cond=((moduleTraitPvalue[,1]<0.05|moduleTraitPvalue[,2]<0.05|moduleTraitPvalue[,4]<0.075)&holder[,1]!="null")
-moduleTraitCor=moduleTraitCor[cond,]
-moduleTraitPvalue=moduleTraitPvalue[cond,]
-textMatrix = paste(signif(moduleTraitCor, 2), "\n(", signif(moduleTraitPvalue, 1), ")", sep = "")
-m=length(textMatrix)*3/5+1
-n=length(textMatrix)*4/5
-textMatrix[m:n]=paste("(",signif(moduleTraitPvalue[,4],2),")",sep="") #work on indices
-m=length(textMatrix)*4/5+1
-n=length(textMatrix)
-textMatrix[m:n]=holder[cond,1] #work on indices
-negs=moduleTraitCor<0
-moduleTraitPvalue[,1:3]=moduleTraitPvalue[,1:3]
-#moduleTraitPvalue=log10(abs(moduleTraitPvalue))
-negs2=matrix(1,nrow(moduleTraitPvalue),ncol(moduleTraitPvalue))
-negs2[negs]=-1
-moduleTraitPvalue[,1:3]=moduleTraitPvalue[,1:3]*negs2[,1:3]
-
-rampcols <- colorRampPalette(colors = c("white"), space="Lab")(200)
-rampcols[91:100] <- colorRampPalette(colors = c("white","purple"), space="Lab")(10)
-rampcols[101:110] <- colorRampPalette(colors = c("yellow","white"), space="Lab")(10)
-xLabels=c('Mutation Burden','Age Correlation','sc_age','SenMayo','REACTOME Term')
-m=length(textMatrix)*2/5+1
-n=length(textMatrix)*3/5
-rownames(moduleTraitPvalue)=str_replace(rownames(moduleTraitPvalue),"ME ","")
-labeledHeatmap(Matrix = moduleTraitPvalue[,c(1,2,4,5)], xLabels = xLabels[-3], yLabels = rownames(moduleTraitPvalue), ySymbols = rownames(moduleTraitPvalue), 
-colorLabels = FALSE, colors = rampcols, textMatrix = textMatrix[-m:-n], setStdMargins = TRUE, cex.text = 0.5, cex.lab.x=1,zlim = c(-1,1), 
-main = paste("Module Attributes"))
