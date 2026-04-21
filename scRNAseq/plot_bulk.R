@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(ComplexHeatmap)
 library(stringr)
 library(WGCNA)
