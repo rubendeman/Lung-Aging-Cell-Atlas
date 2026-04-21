@@ -1,4 +1,3 @@
-setwd("/gpfs/gibbs/project/kaminski/rd796/ageproj")
 library(Seurat)
 library(ggplot2)
 library(ggpubr)
@@ -25,8 +24,7 @@ names(datal)<-str_replace_all(names(datal), c("Alv_Macrophage" = "Alv. Macrophag
 datalsig<-lapply(datal,function(x){x[x$p_val_adj<0.05,]})
 
 #Load libra out
-#load('/home/rd796/palmer_scratch/libra_out.RData')
-load('/home/rd796/project/ageproj/libra_out_hisample_at2sub.RData')
+load('libra_out_hisample.RData')
 res.t<-res.t[order(res.t$p_val_adj),]
 res.t<-res.t[res.t$p_val<1,]
 datal2<-split(res.t,res.t$cell_type)
