@@ -1,19 +1,17 @@
-.libPaths(c("/home/rd796/project/R/4.2", .libPaths()))
 library(Seurat)
 library(tidyverse)
 library(dplyr)
 
 ####### set working directory
-my.workingDir <- "/home/rd796/palmer_scratch"
+my.workingDir <- ?
 
 setwd(my.workingDir)
 
-load('/home/rd796/project/ageproj/imm12_10.RData')
-DefaultAssay(immune.combined)<-'RNA'
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2B']<-'AT2'
-immune.combined$predicted.id[immune.combined$predicted.id=='AT2S']<-'AT2'
+#LOAD INTEGRATED OBJECT
 
-comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
+DefaultAssay(immune.combined)<-'RNA'
+
+comp<-list(Epithelial=c('AT1','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adventitial Fibroblast','Alv. Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv. Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-unlist(comp)
 
 genes.test <- list() #keep genes expressed in greater than 50% of subjects
@@ -42,7 +40,7 @@ if(dir.exists(script.output.dir)==FALSE){
 
 jobsub.filepath <- file.path(script.output.dir, "joblist.txt")
 
-rscript.function.filepath <- "/gpfs/gibbs/pi/kaminski/public/Backup/Ruben/GLMMAging/runmodel.R"
+rscript.function.filepath <- "runmodel.R"
 
 ### what cell type to test
 comp<-list(Epithelial=c('AT1','AT2','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
