@@ -9,11 +9,14 @@ library(patchwork)
 library(ComplexHeatmap)
 library(stringr)
 
+#Add path to GLMM output
+path=?
+
 #read glmmTMB output
 comp<-list(Epithelial=c('AT1','AT2B','AT2S','Basal','Ciliated','Club','Goblet'),Endothelial=c('Lymphatic','Peribronchial','Aerocyte','gCap','Arterial','Venous'),Mesenchymal=c('Adv_Fibroblast','Alv_Fibroblast','Myofibroblast','SMC','Pericyte'),Myeloid=c('Monocyte','Macrophage','Alv_Macrophage'),Lymphoid=c('B','T','Mast','DC','NK'))
 cell.types<-as.list(unlist(comp)); names(cell.types)<-cell.types
-datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES_v2/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
-#datal=lapply(cell.types,function(x){read.table(paste0('/home/rd796/project/ageproj/HPC_GLMM_AGE_GENES/age-glmmTMB_',x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+datal=lapply(cell.types,function(x){read.table(paste0(path,x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
+#datal=lapply(cell.types,function(x){read.table(paste0(path,x,'_resultsTable.txt'),col.names=c('Gene','Beta0','Beta1','p_val','blank'),fill=T,skip=1)})
 #datal=lapply(datal,FUN = setNames,nm=c('Beta0','Beta1','p_val','p_val_adj'))
 datal=lapply(datal,function(x){x[!(is.na(x$Beta1)|is.na(x$p_val)|!is.na(x$blank)),]})
 datal=lapply(datal,function(x){mutate(x,p_val_adj=p.adjust(x$p_val,method='fdr',n=nrow(x)))})
@@ -98,7 +101,6 @@ u1
 noquote(int[['SMC']][intsign1[['SMC']]!=1]) #this is positive genes
 noquote(datalsig[['Myofibroblast']]$Gene[datalsig[['Myofibroblast']]$Beta1<0]) #this is positive genes
 intersect(datalsig[['gCap']]$Gene[datalsig[['gCap']]$Beta1<0],datalsig[['Aerocyte']]$Gene[datalsig[['Aerocyte']]$Beta1<0])
-
 
 #BIG MAP BY SAMPLE (NEW)
 
